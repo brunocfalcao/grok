@@ -1,0 +1,43 @@
+{
+    "name": "brunocfalcao/grok",
+    "description": "Nidavellir Grok",
+    "keywords": [
+        "php"
+    ],
+    "homepage": "https://github.com/brunocfalcao/grok",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Bruno Falcão",
+            "email": "bruno.c.falcao@brunofalcao.me",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/contracts": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nidavellir\\Grok\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nidavellir\\Grok\\GrokServiceProvider"
+            ]
+        }
+    },
+
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
