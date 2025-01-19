@@ -1,10 +1,10 @@
 <?php
 
-use Nidavellir\Thor\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Nidavellir\Thor\Models\Account;
 
 // Add the route with throttling middleware
 Route::middleware([

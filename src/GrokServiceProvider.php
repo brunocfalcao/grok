@@ -19,15 +19,15 @@ class GrokServiceProvider extends ServiceProvider
         Route::middleware([
             'api',
         ])
-        ->group(function () {
-            include __DIR__ . '/../routes/api.php';
-        });
+            ->group(function () {
+                include __DIR__.'/../routes/api.php';
+            });
 
         Route::middleware([
             'web',
         ])
-        ->group(function () {
-            include __DIR__ . '/../routes/web.php';
-        });
+            ->group(function () {
+                include __DIR__.'/../routes/web.php';
+            });
     }
 }
