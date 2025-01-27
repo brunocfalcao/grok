@@ -2,8 +2,8 @@
 
 use Nidavellir\Thor\Models\User;
 use Nidavellir\Thor\Models\System;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use Nidavellir\Thor\Models\CoreJobQueue;
 use Nidavellir\Grok\Controllers\AccountDashboardController;
 
 Route::get('/', function () {
@@ -24,11 +24,16 @@ Route::get('/stop', function () {
 
         $system->update(['can_process_scheduled_tasks' => false]);
 
-        $lastId = CoreJobQueue::where('status', 'completed')->latest()->first()?->id;
+        // Fetch the last completed job ID using raw SQL
+        $lastId = DB::table('core_job_queue')
+            ->where('status', 'completed')
+            ->orderBy('id', 'desc')
+            ->limit(1)
+            ->value('id');
 
         User::admin()->get()->each(function ($user) use ($lastId) {
             $user->pushover(
-                message: "Bot stopped the scheduled tasks. Last ID: " . $lastId,
+                message: "Bot stopped the scheduled tasks. Last ID: " . ($lastId ?? 'N/A'),
                 title: 'Bot scheduled tasks stopped',
                 applicationKey: 'nidavellir_warnings'
             );
@@ -36,7 +41,7 @@ Route::get('/stop', function () {
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Scheduled tasks have been stopped. The bot is now down. Last Core Job Queue ID processed: ' . $lastId,
+            'message' => 'Scheduled tasks have been stopped. The bot is now down. Last Core Job Queue ID processed: ' . ($lastId ?? 'N/A'),
             'timestamp' => now(),
         ]);
     } catch (\Exception $e) {
@@ -63,11 +68,16 @@ Route::get('/start', function () {
 
         $system->update(['can_process_scheduled_tasks' => true]);
 
-        $firstId = CoreJobQueue::where('status', 'pending')->oldest()->first()?->id;
+        // Fetch the first pending job ID using raw SQL
+        $firstId = DB::table('core_job_queue')
+            ->where('status', 'pending')
+            ->orderBy('id', 'asc')
+            ->limit(1)
+            ->value('id');
 
         User::admin()->get()->each(function ($user) use ($firstId) {
             $user->pushover(
-                message: "Bot started processing scheduled tasks. First pending ID: " . $firstId,
+                message: "Bot started processing scheduled tasks. First pending ID: " . ($firstId ?? 'N/A'),
                 title: 'Bot scheduled tasks started',
                 applicationKey: 'nidavellir_warnings'
             );
@@ -75,7 +85,7 @@ Route::get('/start', function () {
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Scheduled tasks have been started. The bot is now running. First Core Job Queue ID to process: ' . $firstId,
+            'message' => 'Scheduled tasks have been started. The bot is now running. First Core Job Queue ID to process: ' . ($firstId ?? 'N/A'),
             'timestamp' => now(),
         ]);
     } catch (\Exception $e) {
