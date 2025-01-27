@@ -3,6 +3,7 @@
 use Nidavellir\Thor\Models\User;
 use Nidavellir\Thor\Models\System;
 use Illuminate\Support\Facades\Route;
+use Nidavellir\Thor\Models\CoreJobQueue;
 use Nidavellir\Grok\Controllers\AccountDashboardController;
 
 Route::get('/', function () {
