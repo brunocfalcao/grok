@@ -11,7 +11,17 @@ Route::get('/', function () {
 
 Route::get('/stop', function () {
     try {
-        System::update(['can_process_scheduled_tasks' => false]);
+        // Retrieve the System instance and update it
+        $system = System::first();
+        if (!$system) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'System record not found. Cannot stop scheduled tasks.',
+                'timestamp' => now(),
+            ], 404);
+        }
+
+        $system->update(['can_process_scheduled_tasks' => false]);
 
         $lastId = CoreJobQueue::where('status', 'completed')->latest()->first()?->id;
 
@@ -40,7 +50,17 @@ Route::get('/stop', function () {
 
 Route::get('/start', function () {
     try {
-        System::update(['can_process_scheduled_tasks' => true]);
+        // Retrieve the System instance and update it
+        $system = System::first();
+        if (!$system) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'System record not found. Cannot start scheduled tasks.',
+                'timestamp' => now(),
+            ], 404);
+        }
+
+        $system->update(['can_process_scheduled_tasks' => true]);
 
         $firstId = CoreJobQueue::where('status', 'pending')->oldest()->first()?->id;
 
