@@ -11,9 +11,12 @@ Route::get('/', function () {
 Route::get('/stop', function () {
     try {
         System::update(['can_process_scheduled_tasks' => false]);
+
+        $lastId = CoreJobQueue::where('status', 'completed')->latest()->first()?->id;
+
         return response()->json([
             'status' => 'success',
-            'message' => 'Scheduled tasks have been stopped. The bot is now down.',
+            'message' => 'Scheduled tasks have been stopped. The bot is now down. Last Core Job Queue ID processed: ' . $lastId,
             'timestamp' => now(),
         ]);
     } catch (\Exception $e) {
