@@ -9,8 +9,21 @@ Route::get('/', function () {
 });
 
 Route::get('/stop', function () {
-    System::update(['can_process_scheduled_tasks' => false]);
-    return 'Scheduled tasks stopped. Bot is down.';
+    try {
+        System::update(['can_process_scheduled_tasks' => false]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Scheduled tasks have been stopped. The bot is now down.',
+            'timestamp' => now(),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to stop scheduled tasks. Please check the logs for more details.',
+            'error' => $e->getMessage(),
+            'timestamp' => now(),
+        ], 500);
+    }
 });
 
 Route::get('/accounts/{uuid}/dashboard', [AccountDashboardController::class, 'show']);
